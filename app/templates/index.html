@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NBP_WebApp - kurs USD</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 3rem auto; padding: 0 1rem; color: #222; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: .6rem .8rem; text-align: left; }
+    th { background: #f3f4f6; }
+    .warn { background: #fff7e0; border: 1px solid #f0c36d; padding: .6rem .8rem; margin-bottom: 1rem; }
+    .err { background: #fdecea; border: 1px solid #e57373; padding: .6rem .8rem; }
+    small { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Kurs średni USD (NBP, tabela A)</h1>
+  {% if error %}
+    <p class="err">{{ error }}</p>
+    {% else %} {% if stale %}
+    <p class="warn">
+      Uwaga: NBP jest chwilowo niedostępne, wyświetlam ostatni znany kurs.
+    </p>
+    {% endif %}
+    <table>
+      <thead>
+        <tr>
+          <th>Waluta</th>
+          <th>Kod</th>
+          <th>Kurs średni (PLN)</th>
+          <th>Data publikacji</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ rate.currency }}</td>
+          <td>{{ rate.code }}</td>
+          <td>{{ "%.4f"|format(rate.mid) }}</td>
+          <td>{{ rate.effective_date }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p><small>Źródło: NBP Web API, tabela A nr {{ rate.table_no }}.</small></p>
+    {% endif %}
+  </body>
+</html>
