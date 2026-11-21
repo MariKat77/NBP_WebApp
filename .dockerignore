@@ -1,0 +1,9 @@
+.git
+.github
+helm
+terraform
+**/__pycache__
+**/*.pyc
+app/tests
+*.md
+.venv
