@@ -1,0 +1,81 @@
+# Domyślne wartości nadpisywane w pipeline (--set image.repository=...)
+
+replicaCount: 2
+
+image:
+  repository: europe-central2-docker.pkg.dev/PROJECT_ID/nbp-webapp/nbp-webapp
+  tag: ""            # pusty -> .Chart.AppVersion
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Konfiguracja aplikacji (zmienne środowiskowe)
+config:
+  logLevel: INFO
+  nbpApiUrl: https://api.nbp.pl/api
+  nbpTimeoutSeconds: "5"
+  cacheTtlSeconds: "900"
+  currencyCode: USD
+
+service:
+  type: LoadBalancer   # ClusterIP gdy używamy Ingressa
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: false
+  className: gce       # lub "nginx" przy ingress-nginx
+  annotations: {}
+  hosts:
+    - host: ""         # pusty host -> reguła dla każdego hosta
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+probes:
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readiness:
+    path: /healthz
+    initialDelaySeconds: 3
+    periodSeconds: 5
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: ["ALL"]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

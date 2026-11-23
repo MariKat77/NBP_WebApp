@@ -1,0 +1,11 @@
+Wdrożono {{ include "nbp-webapp.fullname" . }}.
+
+{{- if .Values.ingress.enabled }}
+Adres publiczny (Ingress): kubectl get ingress {{ include "nbp-webapp.fullname" . }}
+{{- else if eq .Values.service.type "LoadBalancer" }}
+Adres publiczny (może potrwać 1-2 min):
+  kubectl get svc {{ include "nbp-webapp.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+{{- else }}
+Port-forward:
+  kubectl port-forward svc/{{ include "nbp-webapp.fullname" . }} 8080:{{ .Values.service.port }}
+{{- end }}

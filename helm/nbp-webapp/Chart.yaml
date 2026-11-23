@@ -1,0 +1,6 @@
+apiVersion: v2
+name: nbp-webapp
+description: NBP_WebApp - aplikacja webowa prezentująca kurs USD z tabeli A NBP
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
